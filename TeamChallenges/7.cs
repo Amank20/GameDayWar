@@ -14,12 +14,16 @@ namespace InsecureLoginAPI
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel model)
         {
-            string query = $"SELECT * FROM Users WHERE Username = '{model.Username}' AND Password = '{model.Password}'";
+            string username = model.Username;
+            string password = model.Password;
+            string query = $"SELECT * FROM Users WHERE Username = @username AND Password = @password";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Username", username); 
+                cmd.Parameters.AddWithValue("@Password", password);
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
@@ -36,7 +40,7 @@ namespace InsecureLoginAPI
         [HttpPost("storePassword")]
         public IActionResult StorePassword([FromBody] string password)
         {
-            System.IO.File.WriteAllText("passwords.txt", password); // Storing password in plaintext
+            System.IO.File.WriteAllText("passwords.txt", password); // Storing password in plaintext            
             return Ok("Password stored securely... NOT");
         }
 
@@ -51,7 +55,7 @@ namespace InsecureLoginAPI
             catch (Exception ex)
             {
                 // Logging exception details to file (vulnerable)
-                System.IO.File.AppendAllText("error_log.txt", ex.ToString());
+                System.IO.File.AppendAllText("error_log.txt", ex.Message);
                 return BadRequest("An error occurred");
             }
         }
@@ -60,7 +64,7 @@ namespace InsecureLoginAPI
         [HttpGet("adminAccess")]
         public IActionResult AdminAccess()
         {
-            string adminPassword = "admin123"; // Hardcoded password
+            string adminPassword = Environment.GetEnvironmentVariable("PASSWORD"); 
             if (adminPassword == "admin123")
             {
                 return Ok("Admin access granted");
@@ -72,7 +76,9 @@ namespace InsecureLoginAPI
         [HttpGet("greet")]
         public IActionResult GreetUser(string username)
         {
-            return Content($"<h1>Hello, {username}!</h1>"); // Vulnerable to XSS
+            string safeInput = HttpUtility.HtmlEncode(username); 
+            string response = $"<h1>Hello, {safeInput}!</h1>"; 
+            return Content(response); // Vulnerable to XSS
         }
 
         public class LoginModel
