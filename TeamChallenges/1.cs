@@ -19,12 +19,13 @@ namespace VulnerableWebAPI.Controllers
             try
             {
                 // SQL Injection Vulnerability (#1)
-                string query = $"SELECT * FROM Users WHERE UserId = '{userId}'";
+                string query = "SELECT * FROM Users WHERE UserId = @userId";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@userId", userId);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())
