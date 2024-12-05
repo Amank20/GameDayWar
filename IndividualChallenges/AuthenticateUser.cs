@@ -1,16 +1,36 @@
-public void AuthenticateUser(string password)
+public class Authentication
 {
-    if (password == "admin123") // Hardcoded password
+ 
+    public void AuthenticateUser(string password)
     {
-        GrantAccess(); // Insecurely grants access
+        string hashedInputPassword = HashPassword(password);
+        // Compare hashed password with stored hashed password
+        if (hashedInputPassword == storedHashedPassword)
+        {
+            GrantAccess();
+        }
+        else
+        {
+            Console.WriteLine("Access Denied.");
+        }
     }
-    else
+ 
+    private void GrantAccess()
     {
-        Console.WriteLine("Access Denied.");
+        Console.WriteLine("Access Granted!");
     }
-}
-
-private void GrantAccess()
-{
-    Console.WriteLine("Access Granted!");
+ 
+    private string HashPassword(string password)
+    {
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
+    }
 }
