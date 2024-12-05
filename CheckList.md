@@ -1,11 +1,11 @@
 # CheckList
 
 ## Individual Challenges
-- [ ] Access Admin Panel
-- [ ] Add User Input To Cookie
-- [ ] Assign User Input To Inner Html
-- [ ] Authenticate User
-- [ ] Authenticate With Hardcoded Password
+- [x] Access Admin Panel
+- [x] Add User Input To Cookie
+- [x] Assign User Input To Inner Html
+- [x] Authenticate User
+- [x] Authenticate With Hardcoded Password
 - [ ] Connect With Hardcoded Connection String
 - [ ] Create Auth Cookie
 - [ ] Create Tcp Client
@@ -58,23 +58,23 @@
 - [ ] Use Hardcoded Api Key
 - [ ] Use Hardcoded Secret Key
 - [ ] Use Hardcoded Windows Identity
-- [ ] Use Static Token In Cookie
-- [ ] Wrap User Input In Div
-- [ ] Write Exception To File
+- [x] Use Static Token In Cookie
+- [x] Wrap User Input In Div
+- [x] Write Exception To File
 
 ## Team Challenges
-- [ ] 1
+- [x] 1
 - [ ] 2
 - [ ] 3
 - [ ] 4
 - [ ] 5
 - [ ] 6
-- [ ] 7
+- [x] 7
 - [ ] 8
 
 ## Scenario based Challenges
-- [ ] Question1
-- [ ] Question2
+- [x] Question1
+- [x] Question2
 - [ ] Question3
 - [ ] Question4
 - [ ] Question5
