@@ -9,7 +9,7 @@ namespace VulnerableWebAPI.Controllers
     public class InsecureController : ApiController
     {
         // Hardcoded Database Connection String (Vulnerability #3)
-        private readonly string connectionString = "Server=myServer;Database=SensitiveDB;User Id=admin;Password=admin123;";
+        private readonly string connectionString = Environment.GetEnvironmentVariable("connectionString");
 
         // Insecure endpoint to fetch user data
         [HttpGet]
@@ -44,7 +44,7 @@ namespace VulnerableWebAPI.Controllers
             catch (Exception ex)
             {
                 // Improper Error Handling (#4)
-                return InternalServerError(ex);
+                return InternalServerError(ex.Message);
             }
         }
 
@@ -55,21 +55,25 @@ namespace VulnerableWebAPI.Controllers
         {
             try
             {
+                string sanitizedFileName = Path.GetFileName(fileName);
                 // Insecure Direct Object Reference (#2)
-                string filePath = "C:\\SecureFiles\\" + fileName;
+                string filePath = Path.Combine("C:\\SecureFiles\\", sanitizedFileName);
 
-                // Unrestricted File Access (#5)
-                if (File.Exists(filePath))
+                if (Path.GetFullPath(filePath).StartsWith(baseDirectory, StringComparison.OrdinalIgnoreCase))
                 {
-                    string content = File.ReadAllText(filePath);
-                    return Ok(new { FileName = fileName, Content = content });
+                    // Unrestricted File Access (#5)
+                    if (File.Exists(filePath))
+                    {
+                        string content = File.ReadAllText(filePath);
+                        return Ok(new { FileName = fileName, Content = content });
+                    }
                 }
 
                 return NotFound();
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return InternalServerError(ex.Message);
             }
         }
 
