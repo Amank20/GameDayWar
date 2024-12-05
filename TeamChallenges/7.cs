@@ -40,8 +40,25 @@ namespace InsecureLoginAPI
         [HttpPost("storePassword")]
         public IActionResult StorePassword([FromBody] string password)
         {
-            System.IO.File.WriteAllText("passwords.txt", password); // Storing password in plaintext            
-            return Ok("Password stored securely... NOT");
+            // Hash the password before storing
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                // Convert byte array to a string
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                string hashedPassword = builder.ToString();
+
+                // Store the hashed password
+                System.IO.File.WriteAllText("passwords.txt", hashedPassword);
+            }
+
+            return Ok("Password stored securely");
         }
 
         // 3. Improper Exception Handling (Sensitive info logged)
